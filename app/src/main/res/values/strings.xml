@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">StorageMiniProjectCodeBase2</string>
+    <string name="login">Đăng nhập</string>
+    <string name="logout">Đăng xuất</string>
+    <string name="username">Tên đăng nhập</string>
+    <string name="password">Mật khẩu</string>
+    <string name="products">Sản phẩm</string>
+    <string name="categories">Danh mục</string>
+    <string name="cart">Giỏ hàng</string>
+    <string name="checkout">Thanh toán</string>
+    <string name="add_to_cart">Thêm vào giỏ</string>
+    <string name="total">Tổng tiền</string>
+    <string name="status_pending">Chờ thanh toán</string>
+    <string name="status_paid">Đã thanh toán</string>
+</resources>
