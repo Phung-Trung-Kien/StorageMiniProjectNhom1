@@ -23,7 +23,7 @@ public class ProductFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_product, container, false);
 
-        RecyclerView recyclerView = view.findViewById(R.id.rvProducts);
+        RecyclerView recyclerView = view.findViewById(R.id.product_recycler_view);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
         adapter = new ProductAdapter(product -> {

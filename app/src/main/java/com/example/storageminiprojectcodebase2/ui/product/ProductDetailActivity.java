@@ -11,6 +11,7 @@ import com.example.shoppingapp.R;
 import com.example.storageminiprojectcodebase2.data.database.AppDatabase;
 import com.example.storageminiprojectcodebase2.data.entity.Product;
 import com.example.storageminiprojectcodebase2.repository.ProductRepository;
+import com.example.storageminiprojectcodebase2.ui.auth.LoginActivity;
 import com.example.storageminiprojectcodebase2.utils.FormatUtils;
 import com.example.storageminiprojectcodebase2.utils.SessionManager;
 
@@ -34,23 +35,30 @@ public class ProductDetailActivity extends AppCompatActivity {
         sessionManager = new SessionManager(this);
         productId = getIntent().getIntExtra("productId", -1);
 
+        if (productId == -1) {
+            Toast.makeText(this, "Không tìm thấy thông tin sản phẩm", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
         initViews();
         loadProductData();
 
         btnAddToCart.setOnClickListener(v -> {
+            if (currentProduct == null) {
+                return;
+            }
+
             if (!sessionManager.isLoggedIn()) {
-                // Redirect to LoginActivity (TV1 will create this)
-                try {
-                    Class<?> loginActivityClass = Class.forName("com.example.storageminiprojectcodebase2.ui.auth.LoginActivity");
-                    Intent intent = new Intent(this, loginActivityClass);
-                    startActivity(intent);
-                } catch (ClassNotFoundException e) {
-                    Toast.makeText(this, "Chức năng đăng nhập đang được phát triển", Toast.LENGTH_SHORT).show();
-                }
+                Intent intent = new Intent(this, LoginActivity.class);
+                startActivity(intent);
             } else {
-                // Logic to add to cart (TV4 will provide this)
-                // For now, just show a Toast
-                Toast.makeText(this, "Đã thêm vào giỏ hàng: " + currentProduct.name, Toast.LENGTH_SHORT).show();
+                if (currentProduct.stock <= 0) {
+                    Toast.makeText(this, "Sản phẩm đã hết hàng", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Logic to add to cart (sẽ được cập nhật ở các Task sau)
+                    Toast.makeText(this, "Đã thêm vào giỏ hàng: " + currentProduct.name, Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -73,7 +81,12 @@ public class ProductDetailActivity extends AppCompatActivity {
                     tvPrice.setText(FormatUtils.formatPrice(currentProduct.price));
                     tvStock.setText("Tồn kho: " + currentProduct.stock);
                     tvDescription.setText(currentProduct.description);
-                    // Image loading logic would go here
+                    // Có thể thêm logic load ảnh bằng thư viện Glide/Picasso ở đây
+                });
+            } else {
+                runOnUiThread(() -> {
+                    Toast.makeText(this, "Sản phẩm không tồn tại", Toast.LENGTH_SHORT).show();
+                    finish();
                 });
             }
         });

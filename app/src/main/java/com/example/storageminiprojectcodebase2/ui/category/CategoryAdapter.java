@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.example.storageminiprojectcodebase2.R;
+import com.example.shoppingapp.R;
 import com.example.storageminiprojectcodebase2.data.entity.Category;
 import java.util.List;
 

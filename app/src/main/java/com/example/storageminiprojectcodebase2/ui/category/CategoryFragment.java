@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.example.storageminiprojectcodebase2.R;
+import com.example.shoppingapp.R;
 import com.example.storageminiprojectcodebase2.data.entity.Category;
 
 public class CategoryFragment extends Fragment {
