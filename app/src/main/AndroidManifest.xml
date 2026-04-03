@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -11,9 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.StorageMiniProjectCodeBase2">
-        <activity android:name="com.example.storageminiprojectcodebase2.ui.auth.LoginActivity" />
         <activity
-            android:name="com.example.storageminiprojectcodebase2.ui.home.HomeActivity"
+            android:name="com.example.storageminiprojectcodebase2.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,9 +20,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.example.storageminiprojectcodebase2.MainActivity"
-            android:exported="false" />
+        <activity android:name="com.example.storageminiprojectcodebase2.ui.auth.LoginActivity" />
+        <activity android:name="com.example.storageminiprojectcodebase2.ui.category.ProductByCategoryActivity" />
+        <activity android:name="com.example.storageminiprojectcodebase2.ui.product.ProductDetailActivity" />
     </application>
 
 </manifest>
