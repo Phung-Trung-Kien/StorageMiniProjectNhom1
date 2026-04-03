@@ -20,6 +20,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name="com.example.storageminiprojectcodebase2.ui.product.ProductDetailActivity" />
+        <activity android:name="com.example.storageminiprojectcodebase2.ui.order.CheckoutActivity" />
+        <activity android:name="com.example.storageminiprojectcodebase2.ui.order.InvoiceActivity" />
     </application>
 
 </manifest>
