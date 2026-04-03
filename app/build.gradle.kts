@@ -37,6 +37,7 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     implementation(libs.fragment)
+    implementation("androidx.recyclerview:recyclerview:1.4.0")
 
     // Room
     implementation(libs.room.runtime)
