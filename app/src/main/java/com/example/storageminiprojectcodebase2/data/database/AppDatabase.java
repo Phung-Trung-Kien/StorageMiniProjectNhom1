@@ -72,66 +72,66 @@ public abstract class AppDatabase extends RoomDatabase {
 
                 // Categories
                 Category cat1 = new Category();
-                cat1.name = "Điện thoại";
-                cat1.description = "Điện thoại di động các loại";
+                cat1.name = "Hoa quả nhập khẩu";
+                cat1.description = "Các loại hoa quả nhập khẩu cao cấp";
                 categoryDao.insert(cat1);
 
                 Category cat2 = new Category();
-                cat2.name = "Laptop";
-                cat2.description = "Máy tính xách tay";
+                cat2.name = "Hoa quả nội địa";
+                cat2.description = "Trái cây tươi ngon từ các vùng miền Việt Nam";
                 categoryDao.insert(cat2);
 
                 Category cat3 = new Category();
-                cat3.name = "Phụ kiện";
-                cat3.description = "Phụ kiện điện tử";
+                cat3.name = "Hoa quả sấy khô";
+                cat3.description = "Các loại trái cây sấy khô tự nhiên";
                 categoryDao.insert(cat3);
 
                 // Products
                 Product p1 = new Product();
-                p1.name = "iPhone 15 Pro";
-                p1.description = "Apple iPhone 15 Pro 256GB";
-                p1.price = 28990000;
-                p1.stock = 10;
+                p1.name = "Táo Envy Mỹ";
+                p1.description = "Táo Envy size lớn, giòn ngọt, nhập khẩu Mỹ";
+                p1.price = 150000;
+                p1.stock = 50;
                 p1.categoryId = 1;
                 productDao.insert(p1);
 
                 Product p2 = new Product();
-                p2.name = "Samsung Galaxy S24";
-                p2.description = "Samsung Galaxy S24 256GB";
-                p2.price = 22990000;
-                p2.stock = 15;
+                p2.name = "Nho mẫu đơn Hàn Quốc";
+                p2.description = "Nho mẫu đơn (Shine Muscat) giòn, thơm mùi sữa";
+                p2.price = 450000;
+                p2.stock = 20;
                 p2.categoryId = 1;
                 productDao.insert(p2);
 
                 Product p3 = new Product();
-                p3.name = "MacBook Air M3";
-                p3.description = "Apple MacBook Air 13 inch M3 8GB 256GB";
-                p3.price = 32990000;
-                p3.stock = 5;
+                p3.name = "Xoài cát Hòa Lộc";
+                p3.description = "Xoài cát Hòa Lộc loại 1, thơm ngon đặc sản";
+                p3.price = 85000;
+                p3.stock = 100;
                 p3.categoryId = 2;
                 productDao.insert(p3);
 
                 Product p4 = new Product();
-                p4.name = "Dell XPS 13";
-                p4.description = "Dell XPS 13 Intel Core i7 16GB 512GB";
-                p4.price = 27990000;
-                p4.stock = 8;
+                p4.name = "Thanh long ruột đỏ";
+                p4.description = "Thanh long ruột đỏ Bình Thuận, ngọt lịm";
+                p4.price = 35000;
+                p4.stock = 200;
                 p4.categoryId = 2;
                 productDao.insert(p4);
 
                 Product p5 = new Product();
-                p5.name = "Tai nghe AirPods Pro";
-                p5.description = "Apple AirPods Pro Gen 2";
-                p5.price = 6490000;
-                p5.stock = 20;
+                p5.name = "Mít sấy";
+                p5.description = "Mít sấy giòn xuất khẩu, không đường";
+                p5.price = 60000;
+                p5.stock = 150;
                 p5.categoryId = 3;
                 productDao.insert(p5);
 
                 Product p6 = new Product();
-                p6.name = "Chuột Logitech MX Master 3";
-                p6.description = "Chuột không dây cao cấp";
-                p6.price = 1990000;
-                p6.stock = 30;
+                p6.name = "Chuối sấy dẻo";
+                p6.description = "Chuối sứ sấy dẻo tự nhiên, vị ngọt thanh";
+                p6.price = 45000;
+                p6.stock = 120;
                 p6.categoryId = 3;
                 productDao.insert(p6);
             });
