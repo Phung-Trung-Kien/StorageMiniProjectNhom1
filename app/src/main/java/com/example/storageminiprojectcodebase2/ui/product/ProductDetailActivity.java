@@ -6,12 +6,17 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.shoppingapp.R;
 import com.example.storageminiprojectcodebase2.data.database.AppDatabase;
 import com.example.storageminiprojectcodebase2.data.entity.Product;
 import com.example.storageminiprojectcodebase2.repository.ProductRepository;
 import com.example.storageminiprojectcodebase2.ui.auth.LoginActivity;
+import com.example.storageminiprojectcodebase2.ui.order.CheckoutActivity;
+import com.example.storageminiprojectcodebase2.ui.order.OrderViewModel;
+import androidx.lifecycle.ViewModelProvider;
+import com.example.storageminiprojectcodebase2.utils.DrawableUtils;
 import com.example.storageminiprojectcodebase2.utils.FormatUtils;
 import com.example.storageminiprojectcodebase2.utils.SessionManager;
 
@@ -25,6 +30,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     private ImageView imgProduct;
     private TextView tvName, tvPrice, tvStock, tvDescription;
     private Button btnAddToCart;
+    private OrderViewModel orderViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +39,7 @@ public class ProductDetailActivity extends AppCompatActivity {
 
         repository = new ProductRepository(getApplication());
         sessionManager = new SessionManager(this);
+        orderViewModel = new ViewModelProvider(this).get(OrderViewModel.class);
         productId = getIntent().getIntExtra("productId", -1);
 
         if (productId == -1) {
@@ -56,11 +63,43 @@ public class ProductDetailActivity extends AppCompatActivity {
                 if (currentProduct.stock <= 0) {
                     Toast.makeText(this, "Sản phẩm đã hết hàng", Toast.LENGTH_SHORT).show();
                 } else {
-                    // Logic to add to cart (sẽ được cập nhật ở các Task sau)
-                    Toast.makeText(this, "Đã thêm vào giỏ hàng: " + currentProduct.name, Toast.LENGTH_SHORT).show();
+                    addToCart();
                 }
             }
         });
+    }
+
+    private void addToCart() {
+        orderViewModel.getOrCreatePendingOrder(orderId -> {
+            if (orderId > 0) {
+                orderViewModel.addProductToCart(orderId, currentProduct.id, currentProduct.price, () -> {
+                    runOnUiThread(() -> {
+                        showPostAddDialog(orderId);
+                    });
+                });
+            } else {
+                runOnUiThread(() -> {
+                    Toast.makeText(this, "Lỗi khi tạo giỏ hàng", Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
+    }
+
+    private void showPostAddDialog(int orderId) {
+        new AlertDialog.Builder(this)
+                .setTitle("Đã thêm vào giỏ hàng")
+                .setMessage("Bạn có muốn tiếp tục chọn sản phẩm hay đi đến thanh toán?")
+                .setPositiveButton("Thanh toán", (dialog, which) -> {
+                    Intent intent = new Intent(this, CheckoutActivity.class);
+                    intent.putExtra("orderId", orderId);
+                    startActivity(intent);
+                    finish();
+                })
+                .setNegativeButton("Tiếp tục chọn", (dialog, which) -> {
+                    finish(); // Quay lại màn hình danh sách sản phẩm
+                })
+                .setCancelable(false)
+                .show();
     }
 
     private void initViews() {
@@ -81,7 +120,14 @@ public class ProductDetailActivity extends AppCompatActivity {
                     tvPrice.setText(FormatUtils.formatPrice(currentProduct.price));
                     tvStock.setText("Tồn kho: " + currentProduct.stock);
                     tvDescription.setText(currentProduct.description);
-                    // Có thể thêm logic load ảnh bằng thư viện Glide/Picasso ở đây
+                    
+                    // Load image from drawable
+                    int imageResId = DrawableUtils.getDrawableResourceId(this, currentProduct.imageUrl);
+                    if (imageResId != 0) {
+                        imgProduct.setImageResource(imageResId);
+                    } else {
+                        imgProduct.setImageResource(android.R.drawable.ic_menu_gallery);
+                    }
                 });
             } else {
                 runOnUiThread(() -> {

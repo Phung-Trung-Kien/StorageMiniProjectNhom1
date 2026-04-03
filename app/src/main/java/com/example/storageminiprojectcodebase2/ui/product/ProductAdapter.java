@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.shoppingapp.R;
 import com.example.storageminiprojectcodebase2.data.entity.Product;
+import com.example.storageminiprojectcodebase2.utils.DrawableUtils;
 import com.example.storageminiprojectcodebase2.utils.FormatUtils;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,8 +68,14 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             tvProductName.setText(product.name);
             tvProductPrice.setText(FormatUtils.formatPrice(product.price));
             tvProductStock.setText("Tồn kho: " + product.stock);
-            // Assuming image loading is handled by a library like Glide or Picasso, 
-            // but for now we just use a placeholder if needed.
+            
+            // Load image from drawable
+            int imageResId = DrawableUtils.getDrawableResourceId(itemView.getContext(), product.imageUrl);
+            if (imageResId != 0) {
+                imgProduct.setImageResource(imageResId);
+            } else {
+                imgProduct.setImageResource(android.R.drawable.ic_menu_gallery);
+            }
             
             itemView.setOnClickListener(v -> {
                 if (listener != null) {

@@ -54,4 +54,8 @@ public class OrderRepository {
     public OrderDetail findDetailByOrderAndProduct(int orderId, int productId) {
         return orderDetailDao.findByOrderAndProduct(orderId, productId);
     }
+
+    public List<OrderDetail> getDetailsByOrderSync(int orderId) {
+        return orderDetailDao.getSyncByOrderId(orderId);
+    }
 }

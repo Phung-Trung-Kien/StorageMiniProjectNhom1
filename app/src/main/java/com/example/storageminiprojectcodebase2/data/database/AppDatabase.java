@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 import com.example.storageminiprojectcodebase2.data.dao.*;
 import com.example.storageminiprojectcodebase2.data.entity.*;
@@ -14,7 +15,7 @@ import java.util.concurrent.Executors;
 
 @Database(
         entities = {User.class, Category.class, Product.class, Order.class, OrderDetail.class},
-        version = 1,
+        version = 2,
         exportSchema = false
 )
 public abstract class AppDatabase extends RoomDatabase {
@@ -38,12 +39,25 @@ public abstract class AppDatabase extends RoomDatabase {
                                     "shopping_app_db"
                             )
                             .addCallback(seedCallback)
+                            .addMigrations(MIGRATION_1_2)
                             .build();
                 }
             }
         }
         return INSTANCE;
     }
+
+    public static final Migration MIGRATION_1_2 = new Migration(1, 2) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("UPDATE products SET imageUrl = 'tao_envy' WHERE name = 'Táo Envy Mỹ'");
+            database.execSQL("UPDATE products SET imageUrl = 'nho_mau_don_hq' WHERE name = 'Nho mẫu đơn Hàn Quốc'");
+            database.execSQL("UPDATE products SET imageUrl = 'xoai_cat_hoa_loc' WHERE name = 'Xoài cát Hòa Lộc'");
+            database.execSQL("UPDATE products SET imageUrl = 'thanh_long_ruot_do' WHERE name = 'Thanh long ruột đỏ'");
+            database.execSQL("UPDATE products SET imageUrl = 'mit_say' WHERE name = 'Mít sấy'");
+            database.execSQL("UPDATE products SET imageUrl = 'chuoi_say_deo' WHERE name = 'Chuối sấy dẻo'");
+        }
+    };
 
     // Seed dữ liệu mẫu khi tạo DB lần đầu
     private static final RoomDatabase.Callback seedCallback = new RoomDatabase.Callback() {
@@ -93,6 +107,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 p1.price = 150000;
                 p1.stock = 50;
                 p1.categoryId = 1;
+                p1.imageUrl = "tao_envy";
                 productDao.insert(p1);
 
                 Product p2 = new Product();
@@ -101,6 +116,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 p2.price = 450000;
                 p2.stock = 20;
                 p2.categoryId = 1;
+                p2.imageUrl = "nho_mau_don_hq";
                 productDao.insert(p2);
 
                 Product p3 = new Product();
@@ -109,6 +125,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 p3.price = 85000;
                 p3.stock = 100;
                 p3.categoryId = 2;
+                p3.imageUrl = "xoai_cat_hoa_loc";
                 productDao.insert(p3);
 
                 Product p4 = new Product();
@@ -117,6 +134,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 p4.price = 35000;
                 p4.stock = 200;
                 p4.categoryId = 2;
+                p4.imageUrl = "thanh_long_ruot_do";
                 productDao.insert(p4);
 
                 Product p5 = new Product();
@@ -125,6 +143,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 p5.price = 60000;
                 p5.stock = 150;
                 p5.categoryId = 3;
+                p5.imageUrl = "mit_say";
                 productDao.insert(p5);
 
                 Product p6 = new Product();
@@ -133,6 +152,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 p6.price = 45000;
                 p6.stock = 120;
                 p6.categoryId = 3;
+                p6.imageUrl = "chuoi_say_deo";
                 productDao.insert(p6);
             });
         }

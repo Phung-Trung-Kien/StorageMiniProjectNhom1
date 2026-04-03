@@ -5,6 +5,16 @@
     android:layout_height="wrap_content"
     android:padding="12dp">
 
+    <ImageView
+        android:id="@+id/img_product_cart"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:scaleType="centerCrop"
+        android:src="@android:drawable/ic_menu_gallery"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
     <TextView
         android:id="@+id/text_product_name"
         android:layout_width="0dp"
@@ -12,7 +22,8 @@
         android:text="Tên sản phẩm"
         android:textSize="16sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="12dp"
+        app:layout_constraintStart_toEndOf="@+id/img_product_cart"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/text_quantity" />
 
@@ -31,9 +42,10 @@
         android:layout_height="wrap_content"
         android:text="Đơn giá: 0 đ"
         android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="12dp"
+        app:layout_constraintStart_toEndOf="@+id/img_product_cart"
         app:layout_constraintTop_toBottomOf="@+id/text_product_name"
-        app:layout_constraintEnd_toEndOf="@+id/text_subtotal" />
+        app:layout_constraintEnd_toStartOf="@+id/text_subtotal" />
 
     <TextView
         android:id="@+id/text_subtotal"
@@ -46,4 +58,3 @@
         app:layout_constraintTop_toBottomOf="@+id/text_product_name" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-

@@ -23,6 +23,9 @@ public interface OrderDetailDao {
     @Query("SELECT * FROM order_details WHERE orderId = :orderId AND productId = :productId LIMIT 1")
     OrderDetail findByOrderAndProduct(int orderId, int productId);
 
+    @Query("SELECT * FROM order_details WHERE orderId = :orderId")
+    List<OrderDetail> getSyncByOrderId(int orderId);
+
     @Query("DELETE FROM order_details WHERE orderId = :orderId")
     void deleteByOrderId(int orderId);
 }

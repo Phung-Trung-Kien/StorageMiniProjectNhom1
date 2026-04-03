@@ -132,11 +132,12 @@ public class CartFragment extends Fragment {
             for (OrderDetail detail : details) {
                 Product product = productRepository.findById(detail.productId);
                 String productName = product != null ? product.name : "";
+                String imageUrl = product != null ? product.imageUrl : "";
 
                 double subtotal = detail.quantity * detail.unitPrice;
                 total += subtotal;
 
-                items.add(new CartAdapter.CartItem(detail, productName, subtotal));
+                items.add(new CartAdapter.CartItem(detail, productName, imageUrl, subtotal));
             }
 
             final double finalTotal = total;
@@ -170,4 +171,3 @@ public class CartFragment extends Fragment {
         }
     }
 }
-

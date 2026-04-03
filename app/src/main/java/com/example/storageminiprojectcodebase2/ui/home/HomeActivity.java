@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 
@@ -16,6 +17,9 @@ import com.example.storageminiprojectcodebase2.repository.CategoryRepository;
 import com.example.storageminiprojectcodebase2.repository.OrderRepository;
 import com.example.storageminiprojectcodebase2.repository.ProductRepository;
 import com.example.storageminiprojectcodebase2.ui.auth.LoginActivity;
+import com.example.storageminiprojectcodebase2.ui.category.CategoryFragment;
+import com.example.storageminiprojectcodebase2.ui.order.CartFragment;
+import com.example.storageminiprojectcodebase2.ui.product.ProductFragment;
 import com.example.storageminiprojectcodebase2.utils.SessionManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
@@ -39,7 +43,7 @@ public class HomeActivity extends AppCompatActivity {
     private LiveData<List<Order>> ordersLiveData;
     private final Observer<List<Order>> ordersObserver = orders -> {
         orderCount = getSafeSize(orders);
-        renderSelectedTab();
+        updateToolbarSubtitle();
     };
 
     @Override
@@ -59,13 +63,21 @@ public class HomeActivity extends AppCompatActivity {
 
         btnAuth.setOnClickListener(view -> onAuthClicked());
         bottomNavigationView.setOnItemSelectedListener(item -> {
-            selectedTabId = item.getItemId();
-            renderSelectedTab();
+            if (selectedTabId != item.getItemId()) {
+                selectedTabId = item.getItemId();
+                renderSelectedTab();
+            }
             return true;
         });
 
         observeCollections(productRepository, categoryRepository);
-        bottomNavigationView.setSelectedItemId(selectedTabId);
+
+        if (savedInstanceState == null) {
+            bottomNavigationView.setSelectedItemId(R.id.nav_products);
+            renderSelectedTab();
+        } else {
+            selectedTabId = bottomNavigationView.getSelectedItemId();
+        }
     }
 
     @Override
@@ -73,18 +85,17 @@ public class HomeActivity extends AppCompatActivity {
         super.onResume();
         refreshAuthUi();
         bindOrdersForCurrentSession();
-        renderSelectedTab();
     }
 
     private void observeCollections(ProductRepository productRepository, CategoryRepository categoryRepository) {
         productRepository.getAll().observe(this, products -> {
             productCount = getSafeSize(products);
-            renderSelectedTab();
+            updateToolbarSubtitle();
         });
 
         categoryRepository.getAll().observe(this, categories -> {
             categoryCount = getSafeSize(categories);
-            renderSelectedTab();
+            updateToolbarSubtitle();
         });
     }
 
@@ -94,7 +105,9 @@ public class HomeActivity extends AppCompatActivity {
             orderCount = 0;
             refreshAuthUi();
             bindOrdersForCurrentSession();
-            renderSelectedTab();
+            if (selectedTabId == R.id.nav_orders) {
+                renderSelectedTab();
+            }
             return;
         }
         startActivity(new Intent(this, LoginActivity.class));
@@ -106,10 +119,18 @@ public class HomeActivity extends AppCompatActivity {
             tvUsername.setText(getString(R.string.hello_user, username));
             tvUsername.setVisibility(View.VISIBLE);
             btnAuth.setText(R.string.logout);
-            tvToolbarSubtitle.setText(getString(R.string.home_subtitle_user, username));
         } else {
             tvUsername.setVisibility(View.GONE);
             btnAuth.setText(R.string.login);
+        }
+        updateToolbarSubtitle();
+    }
+
+    private void updateToolbarSubtitle() {
+        if (sessionManager.isLoggedIn()) {
+            String username = sessionManager.getUsername();
+            tvToolbarSubtitle.setText(getString(R.string.home_subtitle_user, username));
+        } else {
             tvToolbarSubtitle.setText(R.string.home_subtitle_guest);
         }
     }
@@ -129,39 +150,13 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void renderSelectedTab() {
-        HomeSectionFragment fragment;
+        Fragment fragment;
         if (selectedTabId == R.id.nav_categories) {
-            fragment = HomeSectionFragment.newInstance(
-                    getString(R.string.categories),
-                    getString(R.string.section_categories_title),
-                    getString(R.string.section_categories_description),
-                    getString(R.string.categories_primary_value, categoryCount),
-                    getString(R.string.summary_categories, categoryCount),
-                    getString(R.string.section_categories_description)
-            );
+            fragment = new CategoryFragment();
         } else if (selectedTabId == R.id.nav_orders) {
-            boolean isLoggedIn = sessionManager.isLoggedIn();
-            fragment = HomeSectionFragment.newInstance(
-                    getString(R.string.orders),
-                    getString(isLoggedIn ? R.string.section_orders_title_user : R.string.section_orders_title_guest),
-                    getString(isLoggedIn ? R.string.section_orders_description_user : R.string.section_orders_description_guest),
-                    isLoggedIn
-                            ? getString(R.string.orders_primary_value, orderCount)
-                            : getString(R.string.orders_primary_value_guest),
-                    isLoggedIn
-                            ? getString(R.string.summary_orders_user, orderCount)
-                            : getString(R.string.summary_orders_guest),
-                    getString(isLoggedIn ? R.string.cta_logout : R.string.cta_login)
-            );
+            fragment = new CartFragment();
         } else {
-            fragment = HomeSectionFragment.newInstance(
-                    getString(R.string.products),
-                    getString(R.string.section_products_title),
-                    getString(R.string.section_products_description),
-                    getString(R.string.products_primary_value, productCount),
-                    getString(R.string.summary_products, productCount),
-                    getString(R.string.status_ready)
-            );
+            fragment = new ProductFragment();
         }
 
         getSupportFragmentManager()

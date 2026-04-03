@@ -11,6 +11,7 @@ import com.example.storageminiprojectcodebase2.data.entity.Order;
 import com.example.storageminiprojectcodebase2.data.entity.OrderDetail;
 import com.example.storageminiprojectcodebase2.repository.OrderRepository;
 import com.example.storageminiprojectcodebase2.repository.ProductRepository;
+import com.example.storageminiprojectcodebase2.data.entity.Product;
 import com.example.storageminiprojectcodebase2.utils.SessionManager;
 
 import java.util.List;
@@ -79,6 +80,32 @@ public class OrderViewModel extends AndroidViewModel {
 
     public LiveData<List<OrderDetail>> getCartItems(int orderId) {
         return repository.getDetailsByOrder(orderId);
+    }
+
+    // Thanh toán: hoàn tất đơn hàng và trừ tồn kho
+    public void confirmCheckout(int orderId, double totalAmount, @Nullable Runnable onDone) {
+        AppDatabase.databaseExecutor.execute(() -> {
+            Order order = repository.findOrderById(orderId);
+            if (order != null && "PENDING".equals(order.status)) {
+                // 1. Cập nhật trạng thái đơn hàng
+                order.status = "PAID";
+                order.totalAmount = totalAmount;
+                repository.updateOrder(order);
+
+                // 2. Trừ tồn kho từng sản phẩm
+                List<OrderDetail> details = repository.getDetailsByOrderSync(orderId);
+                if (details != null) {
+                    for (OrderDetail detail : details) {
+                        Product product = productRepository.findById(detail.productId);
+                        if (product != null) {
+                            product.stock = Math.max(0, product.stock - detail.quantity);
+                            productRepository.update(product);
+                        }
+                    }
+                }
+            }
+            if (onDone != null) onDone.run();
+        });
     }
 
     public interface Callback<T> {

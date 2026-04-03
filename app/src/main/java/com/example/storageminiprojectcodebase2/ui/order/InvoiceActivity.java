@@ -1,6 +1,5 @@
 package com.example.storageminiprojectcodebase2.ui.order;
 
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -17,7 +16,9 @@ import com.example.storageminiprojectcodebase2.MainActivity;
 import com.example.storageminiprojectcodebase2.data.database.AppDatabase;
 import com.example.storageminiprojectcodebase2.data.entity.Order;
 import com.example.storageminiprojectcodebase2.data.entity.OrderDetail;
+import com.example.storageminiprojectcodebase2.data.entity.Product;
 import com.example.storageminiprojectcodebase2.repository.OrderRepository;
+import com.example.storageminiprojectcodebase2.repository.ProductRepository;
 import com.example.storageminiprojectcodebase2.utils.DateUtils;
 import com.example.storageminiprojectcodebase2.utils.SessionManager;
 
@@ -31,6 +32,7 @@ public class InvoiceActivity extends AppCompatActivity {
     private TableLayout tlInvoiceDetails;
     private Button btnContinueShopping;
     private OrderRepository orderRepository;
+    private ProductRepository productRepository;
     private SessionManager sessionManager;
     private int orderId;
     private final NumberFormat formatter = NumberFormat.getInstance(new Locale("vi", "VN"));
@@ -42,13 +44,14 @@ public class InvoiceActivity extends AppCompatActivity {
 
         orderId = getIntent().getIntExtra("orderId", -1);
         orderRepository = new OrderRepository(getApplication());
+        productRepository = new ProductRepository(getApplication());
         sessionManager = new SessionManager(this);
 
         initViews();
         loadInvoiceData();
 
         btnContinueShopping.setOnClickListener(v -> {
-            Intent intent = new Intent(this, MainActivity.class); // Giả định MainActivity là splash/home router
+            Intent intent = new Intent(this, MainActivity.class); 
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             finish();
@@ -74,9 +77,6 @@ public class InvoiceActivity extends AppCompatActivity {
                     tvInvoiceCustomer.setText("Khách hàng: " + sessionManager.getUsername());
                     tvInvoiceTotal.setText(formatter.format(order.totalAmount) + " đ");
                 });
-
-                // Tạm thời lấy list details từ LiveData (trong thực tế nên dùng callback hoặc flow)
-                // Vì đây là màn hình hóa đơn tĩnh, ta chỉ cần load 1 lần
             }
         });
 
@@ -84,35 +84,54 @@ public class InvoiceActivity extends AppCompatActivity {
     }
 
     private void fillInvoiceTable(List<OrderDetail> details) {
+        if (details == null) return;
+        
         // Xóa các dòng cũ trừ header (dòng 0)
         int childCount = tlInvoiceDetails.getChildCount();
         if (childCount > 1) {
             tlInvoiceDetails.removeViews(1, childCount - 1);
         }
 
-        for (int i = 0; i < details.size(); i++) {
-            OrderDetail detail = details.get(i);
-            TableRow row = new TableRow(this);
-            row.setPadding(0, 8, 0, 8);
+        AppDatabase.databaseExecutor.execute(() -> {
+            for (int i = 0; i < details.size(); i++) {
+                OrderDetail detail = details.get(i);
+                int index = i + 1;
+                
+                Product product = productRepository.findById(detail.productId);
+                String productName = (product != null) ? product.name : "Sản phẩm #" + detail.productId;
+                
+                runOnUiThread(() -> {
+                    TableRow row = new TableRow(this);
+                    row.setPadding(0, 8, 0, 8);
 
-            TextView tvStt = createCell(String.valueOf(i + 1));
-            TextView tvName = createCell("Sản phẩm #" + detail.productId); // Cần JOIN để lấy tên, tạm để ID
-            TextView tvQty = createCell(String.valueOf(detail.quantity));
-            TextView tvSubtotal = createCell(formatter.format(detail.quantity * detail.unitPrice) + " đ");
+                    TextView tvStt = createCell(String.valueOf(index));
+                    TextView tvName = createCell(productName);
+                    TextView tvQty = createCell(String.valueOf(detail.quantity));
+                    TextView tvSubtotal = createCell(formatter.format(detail.quantity * detail.unitPrice) + " đ");
 
-            row.addView(tvStt);
-            row.addView(tvName);
-            row.addView(tvQty);
-            row.addView(tvSubtotal);
+                    row.addView(tvStt);
+                    row.addView(tvName);
+                    row.addView(tvQty);
+                    row.addView(tvSubtotal);
 
-            tlInvoiceDetails.addView(row);
-        }
+                    tlInvoiceDetails.addView(row);
+                });
+            }
+        });
     }
 
     private TextView createCell(String text) {
         TextView tv = new TextView(this);
         tv.setText(text);
         tv.setPadding(8, 8, 8, 8);
+        tv.setTextColor(getResources().getColor(android.R.color.black));
         return tv;
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Ngăn chặn quay lại CheckoutActivity sau khi đã thanh toán thành công
+        super.onBackPressed();
+        btnContinueShopping.performClick();
     }
 }
