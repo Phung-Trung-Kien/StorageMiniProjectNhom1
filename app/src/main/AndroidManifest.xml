@@ -23,6 +23,9 @@
         <activity android:name="com.example.storageminiprojectcodebase2.ui.auth.LoginActivity" />
         <activity android:name="com.example.storageminiprojectcodebase2.ui.category.ProductByCategoryActivity" />
         <activity android:name="com.example.storageminiprojectcodebase2.ui.product.ProductDetailActivity" />
+        <activity android:name="com.example.storageminiprojectcodebase2.ui.home.HomeActivity" />
+        <activity android:name="com.example.storageminiprojectcodebase2.ui.order.InvoiceActivity" />
+        <activity android:name="com.example.storageminiprojectcodebase2.ui.order.CheckoutActivity" />
     </application>
 
 </manifest>
